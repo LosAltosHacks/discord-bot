@@ -80,7 +80,7 @@ function getListOfHiddenCommands() {
 function executeCommand(command, message, argument) {
 	switch (command) {
 		case 'about':
-			message.channel.send("Hi there! I am the **Los Altos Hacks Bot** and I'm a Discord bot made specifically for the Los Altos Hacks Discord. I'm pleased to meet you! To view my commands, do `!commands`.");
+			message.channel.send("Hi there! I am the **Los Altos Hacks Bot** and I'm a Discord bot made specifically for the Los Altos Hacks Discord. I'm also open-source! You can view my code at <https://github.com/LosAltosHacks/discord-bot>. To view my commands, do `!commands`.");
 		break;
 		case 'help':
 			message.channel.send("**Hi there! If you need help, here's what I can do:**\n- If you want a list of commands, type `!commands`.\n- Some frequently asked questions can be found on our `!website`.\n- If you want to know the rules about Los Altos Hacks, view them using `!rules`.\n- If you want help from a mentor, you can go into the <#554415837574987843> channel and ask for help.\n- If you want to contact a staff member, you can do `!staff` and one will try to assist you as soon as possible!");
