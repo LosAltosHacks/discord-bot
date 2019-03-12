@@ -129,7 +129,7 @@ function executeCommand(command, message, argument) {
 		break;
 		case 'verify':
 			if (message.channel.name !== "verify") {
-				message.channel.send(message.author + " You have already verified your email!");
+				message.delete();
 			} else {
 				if (argument == null) {
 					message.channel.send(message.author + " Usage: `!verify <email>`. Please supply an email.").then(newMessage => setTimeout(function() { newMessage.delete(); }, 5000));
