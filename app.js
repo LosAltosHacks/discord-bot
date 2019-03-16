@@ -4,7 +4,7 @@ const client = new Discord.Client();
 const secrets = require('./secrets.json');
 
 client.on('ready', () => {
-	client.user.setGame("!help for help");
+	client.user.setActivity("!help for help");
 	console.log("Successfully logged in!");
 });
 
@@ -18,7 +18,7 @@ client.on('message', message => {
 			var channel = separate[0].substr(1).toLowerCase();
 			separate.splice(0, 1);
 			var text = separate.join(" ");
-			client.guilds.find("name", "Los Altos Hacks").channels.find("name", channel).send(text);
+			client.guilds.find(guild => guild.name === "Los Altos Hacks").channels.find(c => c.name === channel).send(text);
 		}
 	} else {
 		// Ensure they are using a command
@@ -43,7 +43,10 @@ client.on('message', message => {
 				message.channel.send("Unknown command! Type `!commands` for a list of commands.");
 			}
 		}
-		if (message.channel.name == "verify" && !message.author.bot) message.delete();
+		if (message.channel.name == "verify" && !message.author.bot) {
+			console.log("verify message from " + message.author + ": " + message);
+			message.delete();
+		}
 	}
 });
 
@@ -107,19 +110,21 @@ function executeCommand(command, message, argument) {
 			message.channel.send(message.author + " Are you sure you want to ping **all** staff members that you need help? If so, type `!staff-confirm`. Abuse of this command will lead to a permanent ban from the Discord server.");
 		break;
 		case 'staff-confirm':
-			message.guild.channels.get("418310123904040963").send("@everyone **An attendee requires assistance.** Please send them a direct message and ask what they need ASAP!\n\n**User:** " + message.author);
+			client.guilds.find(guild => guild.name === "Los Altos Hacks").channels.get("418310123904040963").send("@everyone **An attendee requires assistance.** Please send them a direct message and ask what they need ASAP!\n\n**User:** " + message.author);
 			message.channel.send(message.author + " You have successfully notified the staff that you need help. A staff member will get back to you ASAP.");
 		break;
 		case 'website':
 			message.channel.send("View our site at <https://losaltoshacks.com>. We also have a **live dashbaord** which can be viewed at <https://losaltoshacks.com/dashboard>.");
 		break;
 		case 'fry':
-			if (message.member.roles.has(message.guild.roles.find("name", "Director").id) || message.member.roles.has(message.guild.roles.find("name", "Organizer").id) || message.member.roles.has(message.guild.roles.find("name", "Sponsor").id) || message.member.roles.has(message.guild.roles.find("name", "Mentor").id)) {
+			if (message.guild == null) {
+				message.channel.send("You cannot use this command in a DM!");
+			} else if (message.member.roles.has(message.guild.roles.find(role => role.name === "Director").id) || message.member.roles.has(message.guild.roles.find(role => role.name === "Organizer").id) || message.member.roles.has(message.guild.roles.find(role => role.name === "Sponsor").id) || message.member.roles.has(message.guild.roles.find(role => role.name === "Mentor").id)) {
 				if (argument == null) message.channel.send("Yes master... but who?");
 				else {
 					client.fetchUser(argument.substring(3, argument.length - 1)).then(function(result) {
 						if (message.author == result) message.channel.send("Master... I could never betray you!");
-						else if (message.guild.member(result).roles.has(message.guild.roles.find("name", "Director").id) && !message.member.roles.has(message.guild.roles.find("name", "Director").id)) message.channel.send("How dare you try to fry one of the almighty directors? :angry:\n\n*zaps " + message.author.toString() + " with a lightning bolt :cloud_lightning:*");
+						else if (message.guild.member(result).roles.has(message.guild.roles.find(role => role.name === "Director").id) && !message.member.roles.has(message.guild.roles.find(role => role.name === "Director").id)) message.channel.send("How dare you try to fry one of the almighty directors? :angry:\n\n*zaps " + message.author.toString() + " with a lightning bolt :cloud_lightning:*");
 						else message.channel.send("I must obey my masters...\n\n*zaps " + argument + " with 10,000 volts of electricity*");
 					});
 				}
@@ -128,41 +133,59 @@ function executeCommand(command, message, argument) {
 			}
 		break;
 		case 'verify':
-			if (message.channel.name !== "verify") {
+			if (message.guild == null) {
+				message.channel.send("You cannot use this command in a DM!");
+			} else if (message.channel.name !== "verify") {
 				message.delete();
 			} else {
 				if (argument == null) {
 					message.channel.send(message.author + " Usage: `!verify <email>`. Please supply an email.").then(newMessage => setTimeout(function() { newMessage.delete(); }, 5000));
 				} else {
+					console.log("Attempting to verify " + message.author);
 					if (argument.substring(0, 1) == "<" && argument.substring(argument.length - 1, argument.length) == ">") argument = argument.substring(1, argument.length - 1);
 
 					requestVerification(argument, function(role, name) {
 						switch (role) {
 							case "attendee":
-								message.guild.member(message.author).addRole(message.guild.roles.find("name", "Attendee").id);
-								message.guild.member(message.author).setNickname(name);
+								message.guild.fetchMember(message.author).then((member) => {
+									member.addRole(message.guild.roles.find(r => r.name === "Attendee").id);
+									member.setNickname(name);
+								});
 							break;
 							case "mentor":
-								message.guild.member(message.author).addRole(message.guild.roles.find("name", "Mentor").id);
-								message.guild.member(message.author).setNickname(name + " | Mentor");
+								message.guild.fetchMember(message.author).then((member) => {
+									member.addRole(message.guild.roles.find(r => r.name === "Mentor").id);
+									member.setNickname(name + " | Mentor");
+								});
 							break;
 							case "chaperone":
-								message.guild.member(message.author).addRole(message.guild.roles.find("name", "Chaperone").id);
-								message.guild.member(message.author).setNickname(name + " | Chaperone");
+								message.guild.fetchMember(message.author).then((member) => {
+									member.addRole(message.guild.roles.find(r => r.name === "Chaperone").id);
+									member.setNickname(name + " | Chaperone");
+								});
 							break;
 							case "judge":
-								message.guild.member(message.author).addRole(message.guild.roles.find("name", "Judge").id);
-								message.guild.member(message.author).setNickname(name + " | Judge");
+								message.guild.fetchMember(message.author).then((member) => {
+									member.addRole(message.guild.roles.find(r => r.name === "Judge").id);
+									member.setNickname(name + " | Judge");
+								});
 							break;
 							case "sponsor":
-								message.guild.member(message.author).addRole(message.guild.roles.find("name", "Sponsor").id);
-								message.guild.member(message.author).setNickname(name + " | Sponsor");
+								message.guild.fetchMember(message.author).then((member) => {
+									member.addRole(message.guild.roles.find(r => r.name === "Sponsor").id);
+									member.setNickname(name + " | Sponsor");
+								});
 							break;
 							default:
 								message.channel.send(message.author + " An unknown error occurred. Please try again in a few minutes or contact a staff member.").then(newMessage => setTimeout(function() { newMessage.delete(); }, 5000));
 							break;
 						}
 					}, function(errorMessage) {
+						if (typeof errorMessage === 'object' && 'email' in errorMessage) {
+							message.channel.send(message.author + " That is not a valid email! Please include your full email.").then(newMessage => setTimeout(function() { newMessage.delete(); }, 5000));
+							return;
+						}
+
 						switch (errorMessage) {
 							case "Email not verified":
 								message.channel.send(message.author + " Your email has not been verified. Please verify your email by clicking the link in the email you got when you signed up for Los Altos Hacks.").then(newMessage => setTimeout(function() { newMessage.delete(); }, 5000));
@@ -194,7 +217,14 @@ function requestVerification(email, success, error) {
 			'Authorization': 'Bearer ' + secrets.BACKEND_JWT_TOKEN
 		}
 	}, function(err, response, body) {
-		var data = JSON.parse(body);
+		var data;
+		try {
+			data = JSON.parse(body);
+		} catch (e) {
+			error('Backend malfunction, please try again later.');
+			return;
+		}
+
 		if ('message' in data) error(data['message']);
 		else if ('role' in data && 'name' in data) success(data['role'], data['name']);
 	});

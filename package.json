@@ -1,5 +1,5 @@
 {
-  "name": "Los Altos Hacks Discord Bot",
+  "name": "Los-Altos-Hacks-Discord-Bot",
   "version": "1.0.0",
   "description": "Discord bot for Los Altos Hacks Discord server",
   "main": "app.js",
