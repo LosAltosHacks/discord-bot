@@ -44,7 +44,6 @@ client.on('message', message => {
 			}
 		}
 		if (message.channel.name == "verify" && !message.author.bot) {
-			console.log("verify message from " + message.author + ": " + message);
 			message.delete();
 		}
 	}
@@ -141,7 +140,6 @@ function executeCommand(command, message, argument) {
 				if (argument == null) {
 					message.channel.send(message.author + " Usage: `!verify <email>`. Please supply an email.").then(newMessage => setTimeout(function() { newMessage.delete(); }, 5000));
 				} else {
-					console.log("Attempting to verify " + message.author);
 					if (argument.substring(0, 1) == "<" && argument.substring(argument.length - 1, argument.length) == ">") argument = argument.substring(1, argument.length - 1);
 
 					requestVerification(argument, function(role, name) {
