@@ -2,7 +2,6 @@ const request = require('request')
 const botconfig = require('../botconfig.json')
 const attendeeRole = "667153473225228288"
 
-
 module.exports.run = async (bot, message, args, extras) => {
     if (message.channel.name != "verify") return message.delete()
     if (args[0] == null) return message.channel.send(message.author + " Usage: `!verify <email>`. Please supply an email.").then(newMessage => setTimeout(function () { newMessage.delete(); }, 5000));
@@ -49,10 +48,14 @@ module.exports.run = async (bot, message, args, extras) => {
                 member.roles.add(attendeeRole)
                 console.log(body.first_name)
                 member.setNickname(body.first_name + " " + body.last_name);
+            
             });
+            message.delete();
             return message.channel.send("Verified!").then(newMessage => setTimeout(function () { newMessage.delete(); }, 1000));
         } else {
-            return message.channel.send("Looks like you haven't registered yet. You can do so at https://www.losaltoshacks.com ! If you think this is a mistake, contact staff with h!staff")
+            message.channel.send("Looks like you haven't registered yet. You can do so at www.losaltoshacks.com/registration! If you think this is a mistake, contact staff with h!staff").then(newMessage => setTimeout(function () { newMessage.delete(); }, 10000));
+            message.delete()
+            return;
         }
     });
 }

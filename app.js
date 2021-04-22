@@ -2,11 +2,12 @@ const Discord = require('discord.js');
 const post = require('request')
 const fs = require("fs");
 const botconfig = require("./botconfig.json")
-
+const users = require('./users.json');
 const bot = new Discord.Client();
 
 bot.commands = new Discord.Collection();
 bot.aliases = new Discord.Collection();
+
 
 
 //iterating through all the commands in the folder and placing them in the collection
