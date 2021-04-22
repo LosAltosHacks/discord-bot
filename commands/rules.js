@@ -1,5 +1,5 @@
 module.exports.run = async (bot, message, args, extras) => {
-    return message.channel.send("**Hackathon rules:** <https://losaltoshacks4.devpost.com>\n**Code of conduct:** <https://github.com/MLH/mlh-policies/blob/master/code-of-conduct.md>");
+    return message.channel.send(message.guild.channels.cache.get('834623079245152266').toString());
 }
 
 module.exports.config = {
