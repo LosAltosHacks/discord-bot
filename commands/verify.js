@@ -53,7 +53,7 @@ module.exports.run = async (bot, message, args, extras) => {
             message.delete();
             return message.channel.send("Verified!").then(newMessage => setTimeout(function () { newMessage.delete(); }, 1000));
         } else {
-            message.channel.send("Looks like you haven't registered yet. You can do so at www.losaltoshacks.com/registration! If you think this is a mistake, contact staff with h!staff").then(newMessage => setTimeout(function () { newMessage.delete(); }, 10000));
+            message.channel.send("Looks like you haven't registered yet. You can do so at www.losaltoshacks.com/registration! If you think this is a mistake, contact staff with !staff").then(newMessage => setTimeout(function () { newMessage.delete(); }, 8000));
             message.delete()
             return;
         }
