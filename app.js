@@ -32,7 +32,7 @@ fs.readdir("./commands/", (err, files) => {
 
 bot.on('ready', () => {
 	//setting status
-	bot.user.setActivity("h!help for help");
+	bot.user.setActivity(`${botconfig.prefix}help`);
 
 	console.log("Successfully logged in!");
 });
