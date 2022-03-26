@@ -1,17 +1,40 @@
-module.exports.run = async (bot, message, args, extras) => {
-    var profiles = {
-        'Facebook': 'https://facebook.com/losaltoshacks',
-        'Twitter': 'https://twitter.com/losaltoshacks',
-        'Instagram': 'https://instagram.com/losaltoshacks'
-    };
-    var URLProfiles = [];
-    for (var key in profiles) URLProfiles.push(`**${key}:** <${profiles[key]}>`);
-        return message.channel.send(`You can check out our online presence at the following links:\n${URLProfiles.join("\n")}`);
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const { MessageActionRow, MessageButton } = require('discord.js');
+const { generateEmbed } = require('../tools.js');
+
+const profiles = {
+  Facebook: 'https://facebook.com/losaltoshacks',
+  Twitter: 'https://twitter.com/losaltoshacks',
+  Instagram: 'https://instagram.com/losaltoshacks',
+};
+/* const embedFields = [];
+for (const key in profiles) {
+  embedFields.push({ name: key, value: profiles[key], inline: true });
+} */
+
+const components = [];
+for (const key in profiles) {
+  components.push(
+    new MessageButton().setLabel(key).setStyle('LINK').setURL(profiles[key]),
+  );
 }
 
-module.exports.config = {
-    name: "social",
-    usage: "h!social",
-    description: "Lists our @s!",
-    accessibleby: "Members"
-}
+const aboutEmbed = generateEmbed(
+  'Social Media',
+  'You can check out our online presence at the links below.',
+);
+
+const row = new MessageActionRow().addComponents(components);
+
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('social')
+    .setDescription('Lists our @s!'),
+  async execute(client, interaction) {
+    await interaction.reply({
+      embeds: [aboutEmbed],
+      components: [row],
+      ephemeral: true,
+    });
+  },
+};
