@@ -3,6 +3,74 @@ const config = require('../config.json');
 const { generateWarningEmbed, generateEmbed } = require('../tools');
 const axios = require('axios');
 
+async function verify(interaction, email, token) {
+  if (!token) return;
+
+  // Now that we have the token, we can use it to see if the email is registered
+  const verifyOptions = {
+    method: 'GET',
+    url: 'https://api.losaltoshacks.com/attendees/search?email=' + email,
+    headers: {
+      Authorization: 'Bearer ' + token,
+    },
+  };
+
+  axios(verifyOptions)
+    .then(function (response) {
+      if (response.data.length > 0) {
+        // exists
+        const data = response.data[0];
+        interaction.member.roles
+          .add(config.attendeeRole)
+          .catch(function (error) {
+            console.log(
+              '### This is very likely because you have tried running the command as a role higher than the bot!!! ###',
+            );
+            console.error(error);
+          });
+        interaction.member
+          .setNickname(data.first_name + ' ' + data.last_name)
+          .catch(function (error) {
+            console.log(
+              '### This is very likely because you have tried running the command as a role higher than the bot!!! ###',
+            );
+            console.error(error);
+          });
+        interaction.reply({
+          embeds: [
+            generateEmbed(
+              'Verified!',
+              "You are now verified! You'll gain access to the rest of the server soon.",
+            ),
+          ],
+          ephemeral: true,
+        });
+      } else {
+        interaction.reply({
+          embeds: [
+            generateWarningEmbed(
+              'Error!',
+              "Looks like you haven't registered yet. You can do so at www.losaltoshacks.com/registration! If you think this is a mistake, contact staff with `/staff`",
+            ),
+          ],
+          ephemeral: true,
+        });
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+      interaction.reply({
+        embeds: [
+          generateWarningEmbed(
+            'Error!',
+            'Oops, something went wrong. Please inform staff with `/staff`.',
+          ),
+        ],
+        ephemeral: true,
+      });
+    });
+}
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('verify')
@@ -58,9 +126,8 @@ module.exports = {
 
     axios(options)
       .then(function (response) {
-        config.BACKEND_JWT_TOKEN = JSON.parse(response.body).access_token;
-        console.log(JSON.parse(response.body).access_token);
-        console.log(config.BACKEND_JWT_TOKEN);
+        const BACKEND_JWT_TOKEN = response.data.access_token;
+        verify(interaction, email, BACKEND_JWT_TOKEN);
       })
       .catch(function (error) {
         if (error) {
@@ -75,62 +142,6 @@ module.exports = {
             ephemeral: true,
           });
         }
-      });
-
-    if (!config.BACKEND_JWT_TOKEN) return;
-
-    // Now that we have the token, we can use it to see if the email is registered
-    const verifyOptions = {
-      method: 'GET',
-      url: 'https://api.losaltoshacks.com/attendees/search?email=' + email,
-      headers: {
-        Authorization: 'Bearer ' + config.BACKEND_JWT_TOKEN,
-      },
-    };
-
-    axios(verifyOptions)
-      .then(function (response) {
-        console.log(JSON.parse(response.body));
-        if (JSON.parse(response.body).length > 0) {
-          // exists
-          const body = JSON.parse(response.body)[0];
-          interaction.member.roles.add(config.attendeeRole);
-          console.log(body.first_name);
-          interaction.member.setNickname(
-            body.first_name + ' ' + body.last_name,
-          );
-          interaction.reply({
-            embeds: [
-              generateEmbed(
-                'Verified!',
-                "You are now verified! You'll gain access to the rest of the server soon.",
-              ),
-            ],
-            ephemeral: true,
-          });
-        } else {
-          interaction.reply({
-            embeds: [
-              generateWarningEmbed(
-                'Error!',
-                "Looks like you haven't registered yet. You can do so at www.losaltoshacks.com/registration! If you think this is a mistake, contact staff with `/staff`",
-              ),
-            ],
-            ephemeral: true,
-          });
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        interaction.reply({
-          embeds: [
-            generateWarningEmbed(
-              'Error!',
-              '2Oops, something went wrong. Please inform staff with `/staff`.',
-            ),
-          ],
-          ephemeral: true,
-        });
       });
   },
 };
