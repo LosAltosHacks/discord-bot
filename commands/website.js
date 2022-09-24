@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageActionRow, MessageButton } = require('discord.js');
+const { ActionRowBuilder, ButtonBuilder } = require('discord.js');
 const { generateEmbed } = require('../tools.js');
 
 const aboutEmbed = generateEmbed(
@@ -7,10 +7,10 @@ const aboutEmbed = generateEmbed(
   'Check out our website for information!',
 );
 
-const row = new MessageActionRow().addComponents(
-  new MessageButton()
+const row = new ActionRowBuilder().addComponents(
+  new ButtonBuilder()
     .setLabel('Website')
-    .setStyle('LINK')
+    .setStyle('Link')
     .setURL('https://www.losaltoshacks.com'),
 );
 

@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageActionRow, MessageButton } = require('discord.js');
+const { ActionRowBuilder, ButtonBuilder } = require('discord.js');
 const { generateEmbed } = require('../tools.js');
 
 const profiles = {
@@ -15,7 +15,7 @@ for (const key in profiles) {
 const components = [];
 for (const key in profiles) {
   components.push(
-    new MessageButton().setLabel(key).setStyle('LINK').setURL(profiles[key]),
+    new ButtonBuilder().setLabel(key).setStyle('Link').setURL(profiles[key]),
   );
 }
 
@@ -24,7 +24,7 @@ const aboutEmbed = generateEmbed(
   'You can check out our online presence at the links below.',
 );
 
-const row = new MessageActionRow().addComponents(components);
+const row = new ActionRowBuilder().addComponents(components);
 
 module.exports = {
   data: new SlashCommandBuilder()

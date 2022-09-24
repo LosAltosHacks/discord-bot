@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder } = require('discord.js');
 const { generateEmbed, generateWarningEmbed } = require('../tools.js');
 const { staffChannelId } = require('../config.json');
 
@@ -8,11 +8,11 @@ const warningEmbed = generateWarningEmbed(
   'Are you sure you want to ping **all** staff members that you need help? If so, click the button below. Abuse of this command may lead to a ban.',
 );
 
-const row = new MessageActionRow().addComponents(
-  new MessageButton()
+const row = new ActionRowBuilder().addComponents(
+  new ButtonBuilder()
     .setCustomId('staff')
     .setLabel('Yes, I understand and would like to notify staff.')
-    .setStyle('DANGER'),
+    .setStyle('Danger'),
 );
 
 module.exports = {
@@ -37,16 +37,16 @@ module.exports = {
     });
 
     // Disabled Button
-    const disabledRow = new MessageActionRow().addComponents(
-      new MessageButton()
+    const disabledRow = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
         .setCustomId('staff')
         .setLabel('Yes, I understand and would like to notify staff.')
-        .setStyle('DANGER')
+        .setStyle('Danger')
         .setDisabled(true),
     );
 
     collector.on('collect', async (i) => {
-      const notifyEmbed = new MessageEmbed()
+      const notifyEmbed = new EmbedBuilder()
         .setColor([2, 62, 138])
         .setTitle('Request for Help')
         .setAuthor({

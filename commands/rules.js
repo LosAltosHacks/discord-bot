@@ -1,8 +1,8 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const { attendeeRole } = require('../config.json');
 
-const rulesEmbed = new MessageEmbed()
+const rulesEmbed = new EmbedBuilder()
   .setColor([2, 62, 138])
   .setTitle('Rules')
   .setAuthor({
@@ -19,7 +19,7 @@ const rulesEmbed = new MessageEmbed()
     {
       name: 'Hackathon Rules',
       value:
-        "\n\n• No using source code that isn't open source\n• MLH Code of Conduct: https://static.mlh.io/docs/mlh-code-of-conduct.pdf\n• Only **brainstorming** sessions and design concepts are allowed before April 24 - no actual writing of code",
+        "\n\n• No using source code that isn't open source\n• MLH Code of Conduct: https://static.mlh.io/docs/mlh-code-of-conduct.pdf\n• Only **brainstorming** sessions and design concepts are allowed before September 24 - no actual writing of code",
     },
   );
 
@@ -27,7 +27,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('rules')
     .setDescription('Hackathon and Server Rules')
-    .setDefaultPermission(false),
+    .setDefaultMemberPermissions(0),
   async execute(client, interaction) {
     await interaction.deferReply();
     await interaction.deleteReply();

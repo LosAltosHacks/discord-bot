@@ -1,8 +1,8 @@
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
   generateEmbed: (title, description) => {
-    return new MessageEmbed()
+    return new EmbedBuilder()
       .setColor([2, 62, 138])
       .setTitle(title)
       .setAuthor({
@@ -13,7 +13,7 @@ module.exports = {
       .setDescription(description);
   },
   generateWarningEmbed: (title, description) => {
-    return new MessageEmbed()
+    return new EmbedBuilder()
       .setColor('#FC6255')
       .setTitle(title)
       .setAuthor({
